@@ -1,0 +1,14 @@
+name: corr_shap_env
+dependencies:
+  - python
+  - numpy
+  - scikit-learn
+  - pandas
+  - scipy
+  - matplotlib
+  - statsmodels
+  - slicer
+  - shap
+  - pip
+  - pip:
+    - rivapy
