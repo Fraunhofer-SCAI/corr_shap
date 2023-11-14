@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "wheel", "oldest-supported-numpy"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "corr_shap"
+version = "0.0.1"
+description = "This package is an extension of the KernelExplainer of shap package that explains the output of any machine learning model, taking into account dependencies between features. "
+keywords = ["shap", "shapley", "dependent", "correlated", "corr_shap", "xai", "explainable artificial intelligence"]
+readme = "README.md"
+dependencies = [
+    "shap",
+    "statsmodels",
+    "numpy",
+    "scikit-learn",
+    "pandas",
+    "scipy",
+    "statsmodels",
+    "slicer"
+]
+
+[tool.setuptools]
+packages = ["corr_shap", "corr_shap.sampling"]

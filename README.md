@@ -1,92 +1,101 @@
-# shapley
+# Shapley values for correlated features
 
-
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.scai.fraunhofer.de/computational_finance/shapley.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.scai.fraunhofer.de/computational_finance/shapley/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+This package contains an extension of the [shap package](https://github.com/shap/shap) based on the paper ['Explaining individual predictions when features are dependent: More accurate
+approximations to Shapley values'](https://arxiv.org/abs/1903.10464) that describes methods to more accurately approximate shapley values when features in the dataset are correlated. 
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+To install the package with pip, simply run
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+`pip install corr-shap`
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Alternatively, you can download the [corr_shap repository](https://github.com/Fraunhofer-SCAI/corr_shap) and
+create a conda environment with  
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+`conda env create -f environment.yml`
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+## Background
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### SHAP
+SHAP (SHapley Additive exPlanations) is a method to explain the output of a machine learning model.
+It uses Shapley values from game theory to compute the contribution of each input feature to the output of the model.
+Therefore, it can help users understand the factors influencing a model's decision-making process.
+Since the computational effort to calculate Shapley values grows exponentially, approximation methods such as Kernel SHAP are needed. 
+See the paper ['A Unified Approach to Interpreting Model Predictions'](http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions)
+by Scott M. Lundberg and Su-In Lee for more details on Kernel SHAP or their [SHAP git repo](https://github.com/shap/shap) for the implementation.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### Correlated Explainer
+One disadvantage of Kernel SHAP is the fact that it assumes that all features are independent.
+If there is a high correlation between the features, the results of Kernel SHAP can be inaccurate.
+Therefore, Kjersti Aas, Martin Jullum and Anders Løland propose an extension of Kernel SHAP in their paper 
+['Explaining individual predictions when features are dependent: More accurate
+approximations to Shapley values'](https://arxiv.org/abs/1903.10464). 
+Instead of assuming feature independence, they use either a Gaussian distribution, 
+a Gaussian copula distribution, an empirical conditional distribution, 
+or a combination of the empirical distribution with one of the other two.
+This can produce more accurate results in case of dependent features.
 
-## License
-For open source projects, say how it is licensed.
+Their proposed method is implemented in the 'CorrExplainer' class. Based on the chosen sampling strategy, the CorrExplainer 
+uses one of the distributions mentioned above or returns the same result as the Kernel Explainer (while having a faster runtime) 
+in case the 'default' sampling strategy is chosen.
+In our comparisons (with [data sets 'adult', 'linear independent 60' and
+'diabetes'](https://shap.readthedocs.io/en/latest/api.html#datasets))
+the CorrExplainer was between 6 to 19 times faster than the Kernel Explainer.
+However, in its current implementation it is only suitable for the explanation of tabular data.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+## Examples
+### Explaining a single instance
+Below is a code example that shows how to use the CorrExplainer to explain a single instance
+of the 'adult' dataset and display the result in a bar plot.
+
+````python
+from sklearn import linear_model
+from sklearn.model_selection import train_test_split
+import shap
+from corr_shap.CorrExplainer import CorrExplainer
+
+# load data
+x, y = shap.datasets.adult()
+
+# train model
+x_training_data, x_test_data, y_training_data, y_test_data \
+    = train_test_split(x, y, test_size=0.2, random_state=0)
+model = linear_model.LinearRegression()
+model.fit(x_training_data, y_training_data)
+
+# create explanation object with CorrExplainer
+explainer = CorrExplainer(model.predict, x_training_data, sampling="default")
+explanation = explainer(x_test_data[:1])
+
+shap.plots.bar(explanation)
+````
+
+![plot](images/dependent_bar_plot.png)
+
+### Explaining full 'adult' dataset
+
+To get a sense, which features are most important in the whole dataset and not just a single instance, the shap values 
+for each feature and each sample can be visualized in the same plot.
+See example code [here](examples/adult_beeswarmplot.py).
+
+![plot](images/adult_beeswarmplot_all_sample.png)
+
+### Credit default data
+Another example with a credit default dataset from the [rivapy package](https://github.com/RIVACON/RiVaPy) with high correlation between the features 'income' and 'savings' 
+and a model that ignores the 'savings' feature can be found [here](examples/credit_default.py).
+
+Bar plot explaining a single instance:
+![plot](images/comparison_bar_plot.png)
+
+Summary plot explaining multiple samples:
+![plot](images/creditdefault_beeswarmplot_5000_sample.png)
+
+Further examples can be found in the [examples](examples) folder.
+
+## References
+* ['A Unified Approach to Interpreting Model Predictions'](http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions) 
+Scott M. Lundberg, Su-In Lee
+* ['Explaining individual predictions when features are dependent: More accurate approximations to Shapley values'](https://arxiv.org/abs/1903.10464) 
+Kjersti Aas, Martin Jullum and Anders Løland
+* [shap package](https://github.com/shap/shap)
+* [rivapy package](https://github.com/RIVACON/RiVaPy)
